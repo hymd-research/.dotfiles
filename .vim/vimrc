@@ -1,0 +1,168 @@
+if &compatible
+    set nocompatible
+endif
+
+"" Add the dein installation directory into runtimepath
+set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
+
+if dein#load_state('~/.cache/dein')
+    call dein#begin('~/.cache/dein')
+    call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+    if !has('nvim')
+        call dein#add('roxma/nvim-yarp')
+        call dein#add('roxma/vim-hug-neovim-rpc')
+    endif
+
+    call dein#end()
+    call dein#save_state()
+endif
+
+call dein#add('Shougo/deoplete.nvim')
+call dein#add('Shougo/unite.vim')
+call dein#add('Shougo/vimfiler.vim')
+call dein#add('scrooloose/syntastic')
+call dein#add('itchyny/lightline.vim')
+call dein#add('tpope/vim-fugitive')
+call dein#add('Yggdroot/indentLine')
+call dein#add('nathanaelkane/vim-indent-guides')
+call dein#add('cocopon/iceberg.vim')
+
+filetype plugin indent on
+syntax enable
+
+
+if dein#check_install()
+    call dein#install()
+endif
+
+" config above
+" indent-guides
+colorscheme iceberg
+" vimfiler
+let g:vimfiler_as_default_explorer=1
+
+" lightline
+set laststatus=2
+
+" molokai
+let g:rehash256=1
+
+" indentline
+set list lcs=tab:\|\
+let g:indentLine_char = 'c'
+let g:indentLine_color_term = 239
+
+let g:lightline = {
+    \'colorscheme': 'wombat',
+    \'mode_map': {
+    \    'c': 'NORMAL'
+    \},
+    \'active': {
+    \    'left':  [['mode', 'paste'],
+    \              ['fugitive', 'absolutepath']],
+    \    'right': [['syntastic', 'lineinfo'],
+    \              ['percent'],
+    \              ['fileformat', 'fileencoding', 'filetype']]
+    \},
+    \'component_function': {
+    \    'modified': 'LightlineModified',
+    \    'readonly': 'LightlineReadonly',
+    \    'fugitive': 'LightlineFugitive',
+    \    'filename': 'LightlineFilename',
+    \    'fileformat': 'LightlineFileformat',
+    \    'filetype': 'LightlineFiletype',
+    \    'fileencoding': 'LightlineFileencoding',
+    \    'mode': 'LightlineMode'
+    \},
+    \'component_expand': {
+    \    'syntastic': 'SyntasticStatuslineFlag'
+    \},
+    \'component_type': {
+    \    'syntastic': 'error'
+    \}
+\}
+
+function! LightlineModified()
+    return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightlineReadonly()
+    return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+endfunction
+
+function! LightlineFilename()
+  return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+        \  &ft == 'dein' ? dein#get_status_string() :
+        \  '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlineFugitive()
+    if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+        return fugitive#head()
+    else
+        return ''
+    endif
+endfunction
+
+function! LightlineFileformat()
+    return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+    return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileencoding()
+    return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightlineMode()
+    return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+" indent guides
+let g:indent_guides_enable_on_vim_startup = 1
+
+" end config
+"" end dein
+
+set history=50
+set ruler
+set showcmd
+set incsearch
+set number
+set cursorline
+set cursorcolumn
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set noshowmode
+
+map Q gq
+inoremap <C-u> <C-G>u<C-U>
+
+if has("autocmd")
+    filetype plugin indent on
+    augroup vimrcEX
+        au!
+        " In text files, always limit the width of text to 78 characters
+        autocmd FileType text setlocal textwidth=78
+        " When editing a file, always jump to the last cursor position
+        autocmd BufReadPost *
+        \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+        \   exe "normal! g'\"" |
+        \ endif
+    augroup END
+
+else
+    set autoindent
+
+endif
+
+if &t_Co > 2 || has("gui_running")
+    syntax on
+    set hlsearch
+endif
