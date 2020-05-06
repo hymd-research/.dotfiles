@@ -1,7 +1,12 @@
 #!/usr/local/bin/zsh
 
-curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > ./installer.sh
-sh ./installer.sh "${HOME}/.cache/dein"
-rm ./installer.sh
+if [! -e "${HOME}"/.cache/.dein]; then
+    curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > ./installer.sh
+    sh ./installer.sh "${HOME}/.cache/dein"
+    rm ./installer.sh
+fi
 
-git clone --recursive https://github.com/sorin-ionescu/prezto.git "${HOME}/.zprezto"
+if [! -e "${HOME}"/.zprezto]; then
+    git clone --recursive https://github.com/sorin-ionescu/prezto.git "${HOME}/.zprezto"
+fi
+
