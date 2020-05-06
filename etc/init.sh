@@ -4,6 +4,7 @@
 
 setopt EXTENDED_GLOB
 for rcfile in "${HOME}"/.dotfiles/.??*; do
-  if  [[ "$rcfile" == ".git" ]] && continue 
-  ln -s "$rcfile" "${HOME}/${rcfile:t}"
+  [[ "${rcfile:t}" == ".git" ]] && continue 
+  #echo "${rcfile} ${HOME}/${rcfile:t}"
+  ln -s "${rcfile}" "${HOME}/${rcfile:t}"
 done
